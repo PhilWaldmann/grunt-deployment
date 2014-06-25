@@ -79,15 +79,20 @@ module.exports = function(grunt) {
     
 
     var done = this.async();
-    
-    grunt.util.async.series([
+    var tasks = [
       checkBranch,
       checkLastTag,
       git(['add', '--all']),
       git(['commit', '--message="' + options.commit + '"']),
       git(['tag', options.tag]),
       git(['push', '--tags', options.remote, options.branch])
-    ], done);
+    ];
+    
+    if(!options.tag){
+      tasks.splice(4, 1);
+    }
+    
+    grunt.util.async.series(tasks, done);
   });
 
 };

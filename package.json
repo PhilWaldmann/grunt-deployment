@@ -1,7 +1,7 @@
 {
   "name": "grunt-deployment",
   "description": "Deploy files to any git branch + tags",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "",
   "author": {
     "name": "Philipp Waldmann",

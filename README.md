@@ -24,30 +24,44 @@ In your project's Gruntfile, add a section named `deployment` to the data object
 
 ```js
 grunt.initConfig({
+  pkg: grunt.file.readJSON('package.json'),
+  
   deployment: {
     options: {
-      // Task-specific options go here.
+      branch: 'deployment',
+      tag: 'v<%= pkg.version %>',
+      commit: 'deploy <%= pkg.version %>'
     },
-    your_target: {
-      // Target-specific file lists and/or options go here.
-    },
+    src: 'directory/to/deploy'
   },
 });
 ```
 
 ### Options
 
-#### options.separator
+#### options.branch
 Type: `String`
-Default value: `',  '`
+Default value: `deployment`
 
-A string value that is used to do something with whatever.
+The branch to push to.
 
-#### options.punctuation
+#### options.commit
 Type: `String`
-Default value: `'.'`
+Default value: `auto-commit`
 
-A string value that is used to do something else with whatever else.
+The commit message
+
+#### options.tag
+Type: `String`
+Default value: null
+
+The tag name
+
+#### options.remote
+Type: `String`
+Default value: `origin`
+
+The remote name
 
 ### Usage Examples
 
