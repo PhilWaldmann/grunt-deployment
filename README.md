@@ -64,6 +64,39 @@ Default value: `origin`
 The remote name
 
 
+## The "clone" task
+
+### Overview
+In your project's Gruntfile, add a section named `clone` to the data object passed into `grunt.initConfig()`.
+
+```js
+grunt.initConfig({
+  pkg: grunt.file.readJSON('package.json'),
+  
+  clone: {
+    options: {
+      branch: 'deployment'
+    },
+    src: 'directory/to/deploy'
+  },
+});
+```
+
+### Options
+
+#### options.branch
+Type: `String`
+Default value: `deployment`
+
+The branch to clone.
+
+#### options.remote
+Type: `String`
+Default value: `origin`
+
+The remote name
+
+
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 

@@ -11,6 +11,57 @@
 module.exports = function(grunt) {
   var spawn = grunt.util.spawn;
 
+
+  //git helper
+  function git(args, src, log) {
+    if(log === undefined) log = true;
+    return function(next) {
+      if(log) grunt.log.writeln('Running ' + args.join(' ').green);
+      spawn({
+        cmd: 'git',
+        args: args,
+        opts: {cwd: src}
+      }, function(err, result, code){
+        if(err){
+          var msg = result.stderr;
+          if(!msg) msg = result.stdout;
+          if(!msg) msg = err;
+          grunt.fail.warn('git error: ' + msg + '.');
+          return false;
+        }
+        next(err, result, code)
+      });
+    };
+  }
+  
+  
+
+  grunt.registerMultiTask('clone', 'Clone the current report to another location with a specific branch', function() {
+    var options = this.options({
+      branch: 'deployment',
+      remote: 'origin'
+    });
+        
+    var src = this.filesSrc[0];
+    
+    
+    if (src) {
+      grunt.file.delete(src);
+    }
+    
+    var done = this.async();
+    git(['config', '--get', 'remote.' + options.remote + '.url'], '.', false)(function(err, result){
+      var url = result.stdout;
+      
+      git(['clone', url, '-b', options.branch, src])(done);
+      
+    });
+    
+  });
+
+
+
+
   grunt.registerMultiTask('deployment', 'Deploy files to any git branch + tags', function() {
     // Merge task-specific and/or target-specific options with these defaults.
     var options = this.options({
@@ -26,32 +77,11 @@ module.exports = function(grunt) {
       return false;
     }
 
-    //git helper
-    function git(args, log) {
-      if(log === undefined) log = true;
-      return function(next) {
-        if(log) grunt.log.writeln('Running ' + args.join(' ').green);
-        spawn({
-          cmd: 'git',
-          args: args,
-          opts: {cwd: src}
-        }, function(err, result, code){
-          if(err){
-            var msg = result.stderr;
-            if(!msg) msg = result.stdout;
-            if(!msg) msg = err;
-            grunt.fail.warn('git error: ' + msg + '.');
-            return false;
-          }
-          next(err, result, code)
-        });
-      };
-    }
-
+  
 
     //check if tag already exists
     function checkLastTag(next){
-      git(['tag'], false)(function(err, result){
+      git(['tag'], src, false)(function(err, result){
         var tags = result.stdout.split('\n');
 
         if(tags.indexOf(options.tag) !== -1){
@@ -65,7 +95,7 @@ module.exports = function(grunt) {
     
     
     function checkBranch(next){
-      git(['rev-parse', '--abbrev-ref', 'HEAD'], false)(function(err, result){
+      git(['rev-parse', '--abbrev-ref', 'HEAD'], src, false)(function(err, result){
         var current_branch = result.stdout;
 
         if(current_branch != options.branch){
@@ -82,10 +112,10 @@ module.exports = function(grunt) {
     var tasks = [
       checkBranch,
       checkLastTag,
-      git(['add', '--all']),
-      git(['commit', '--message="' + options.commit + '"']),
-      git(['tag', options.tag]),
-      git(['push', '--tags', options.remote, options.branch])
+      git(['add', '--all'], src),
+      git(['commit', '--message="' + options.commit + '"'], src),
+      git(['tag', options.tag], src),
+      git(['push', '--tags', options.remote, options.branch], src)
     ];
     
     if(!options.tag){
