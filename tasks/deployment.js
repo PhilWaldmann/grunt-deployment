@@ -49,12 +49,12 @@ module.exports = function(grunt) {
       grunt.file.delete(src);
     }
     
+    var src = this.files[0].orig.src[0];
+    
     var done = this.async();
     git(['config', '--get', 'remote.' + options.remote + '.url'], '.', false)(function(err, result){
-      var url = result.stdout;
-      
-      git(['clone', url, '-b', options.branch, src])(done);
-      
+      var url = options.url || result.stdout;     
+      git(['clone', url, '-b', options.branch, src])(done);      
     });
     
   });

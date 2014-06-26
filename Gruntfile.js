@@ -16,7 +16,7 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
 
     // Configuration to be run (and then tested).
-    deployment: {
+    clone: {
       default_options: {
         options: {
           branch: 'deployment',
@@ -34,7 +34,7 @@ module.exports = function(grunt) {
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['deployment']);
+  grunt.registerTask('test', ['clone']);
 
   // By default, lint and run all tests.
   grunt.registerTask('default', ['test']);

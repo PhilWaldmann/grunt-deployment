@@ -96,6 +96,12 @@ Default value: `origin`
 
 The remote name
 
+#### options.url
+Type: `String`
+Default value: `null`
+
+By default it will take the url of the remote of the current directory.
+
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
